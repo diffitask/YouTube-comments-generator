@@ -1,10 +1,9 @@
 import torch
-from transformers import GPT2Tokenizer, GPT2Model, AdamW, get_linear_schedule_with_warmup
+from transformers import GPT2Tokenizer, GPT2LMHeadModel, GPT2Model, AdamW, get_linear_schedule_with_warmup
 import numpy as np
 from torch.utils.data import Dataset, DataLoader
+import streamlit as st
 
-
-# TODO: score and metrics for model
 
 def generate_comment_str(model_req_text: str, model, tokenizer, device) -> str:
     tokens = tokenizer.encode(model_req_text)
@@ -20,17 +19,32 @@ def generate_comment_str(model_req_text: str, model, tokenizer, device) -> str:
 
     return tokenizer.decode(tokens)
 
-def train_model(dataset, model, tokenizer, device,
-                      batch_size=16, epochs=5, lr=2e-5,
-                      max_seq_len=400, warmup_steps=200,
-                      gpt2_type="gpt2", output_dir=".", output_prefix="wreckgar",
-                      test_mode=False):
+
+@st.cache_data
+def build_model():
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    tokenizer = GPT2Tokenizer.from_pretrained('gpt2', add_prefix_space=True)
+    model = GPT2LMHeadModel.from_pretrained('gpt2').train(False).to(device)
+    return device, tokenizer, model
+
+
+@st.cache_data
+def train_model_stub(train_dataframe, model, tokenizer, device):
+    pass
+
+@st.cache_data
+def train_model(train_dataframe, model, tokenizer, device,
+                batch_size=16, epochs=5, lr=2e-5,
+                max_seq_len=400, warmup_steps=200,
+                gpt2_type="gpt2", output_dir=".", output_prefix="wreckgar",
+                test_mode=False):
+    # TODO
     optimizer = AdamW(model.parameters(), lr=lr)
     scheduler = get_linear_schedule_with_warmup(
         optimizer, num_warmup_steps=warmup_steps, num_training_steps=-1
     )
 
-    train_dataloader = DataLoader(dataset, batch_size=1, shuffle=True)
+    train_dataloader = DataLoader(train_dataframe, batch_size=1, shuffle=True)
     loss = 0
     accumulating_batch_count = 0
     input_tensor = None
@@ -43,3 +57,8 @@ def train_model(dataset, model, tokenizer, device,
     torch.save(model.state_dict(), 'model_dict.pt')
 
     return model
+
+
+def score_model(test_dataframe, model):
+    # TODO
+    pass

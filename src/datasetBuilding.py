@@ -2,8 +2,10 @@ import pandas as pd
 import math
 from typing import Tuple
 from yt_dlp import YoutubeDL
+import streamlit as st
 
 
+@st.cache_data
 def build_dataset(path_to_data_file: str = "../data/UScomments.csv", ratio: float = 0.8) -> Tuple[pd.Series, pd.Series]:
     dataframe = pd.read_csv(path_to_data_file,
                             sep=',',

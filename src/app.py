@@ -1,26 +1,19 @@
 import streamlit as st
 from PIL import Image
-import torch
-from transformers import GPT2Tokenizer, GPT2LMHeadModel
-from datasetBuilding import get_youtube_video_info
-from model import generate_comment_str
+from datasetBuilding import build_dataset, get_youtube_video_info
+from model import generate_comment_str, build_model, train_model_stub
 
 st.title("YouTube comments generator")
 
 image = Image.open('img/youtube-comments-img.jpeg')
 st.image(image, width=200)
 
-
-@st.cache_data
-def build_model():
-    device_m = 'cuda' if torch.cuda.is_available() else 'cpu'
-    tokenizer_m = GPT2Tokenizer.from_pretrained('gpt2', add_prefix_space=True)
-    model_m = GPT2LMHeadModel.from_pretrained('gpt2').train(False).to(device_m)
-    return device_m, tokenizer_m, model_m
-
-
 # building model
 device, tokenizer, model = build_model()
+# building dataset
+train_dataframe, test_dataframe = build_dataset()
+# train model
+train_model_stub(train_dataframe, model, tokenizer, device)
 
 
 def create_model_request(video_link: str):
