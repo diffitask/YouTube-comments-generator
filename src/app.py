@@ -1,7 +1,8 @@
 import streamlit as st
 from PIL import Image
-from datasetBuilding import build_dataset, get_youtube_video_info
-from model import generate_comment_str, build_model, train_model_stub
+from datasetBuilding import build_dataset, train_test_dataset_split
+from model import generate_text, build_model, train_model_stub
+from utils import get_youtube_video_info
 
 st.title("YouTube comments generator")
 
@@ -10,10 +11,13 @@ st.image(image, width=200)
 
 # building model
 device, tokenizer, model = build_model()
+
 # building dataset
-train_dataframe, test_dataframe = build_dataset()
+dataframe = build_dataset()
+train_dataframe, test_dataframe = train_test_dataset_split(dataframe)
+
 # train model
-train_model_stub(train_dataframe, model, tokenizer, device)
+train_model_stub()
 
 
 def create_model_request(video_link: str):
@@ -28,7 +32,7 @@ def create_model_request(video_link: str):
 
 def generate_comment(video_link: str):
     model_req_text = create_model_request(video_link)
-    res_str = generate_comment_str(model_req_text, model, tokenizer, device)
+    res_str = generate_text(model_req_text, model, tokenizer, device) + '"'
     st.markdown("### Generated comment")
     st.write(res_str)
 

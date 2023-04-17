@@ -5,7 +5,7 @@ from torch.utils.data import Dataset, DataLoader
 import streamlit as st
 
 
-def generate_comment_str(model_req_text: str, model, tokenizer, device) -> str:
+def generate_text(model_req_text: str, model, tokenizer, device) -> str:
     tokens = tokenizer.encode(model_req_text)
     num_steps = 30
 
@@ -29,8 +29,9 @@ def build_model():
 
 
 @st.cache_data
-def train_model_stub(train_dataframe, model, tokenizer, device):
-    pass
+def train_model_stub():
+    return
+
 
 @st.cache_data
 def train_model(train_dataframe, model, tokenizer, device,
