@@ -19,14 +19,18 @@ def build_model():
     return device_m, tokenizer_m, model_m
 
 
-# model
+# building model
 device, tokenizer, model = build_model()
 
 
 def create_model_request(video_link: str):
     video_title, video_desc = get_youtube_video_info(video_link)
-    return f"The YouTube video named '{video_title}' that is described as '{video_desc}'" \
-        + " may have the following comment: "
+
+    # title_desc_req = f"The YouTube video named '{video_title}' that is described as '{video_desc}'" \
+    #     + " may have the following comment: "
+
+    title_req = f"The YouTube video named '{video_title}' may have the following comment: "
+    return title_req
 
 
 def generate_comment(video_link: str):
